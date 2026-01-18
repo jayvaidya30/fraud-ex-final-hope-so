@@ -120,7 +120,10 @@ export function useCaseDetail(caseId: string): UseCaseDetailReturn {
     const fetchCaseDetail = useCallback(async () => {
         if (!caseId) return;
 
-        setLoading(true);
+        // Don't show loading spinner on poll refetches
+        if (!caseDetail) {
+            setLoading(true);
+        }
         setError(null);
 
         try {
@@ -133,7 +136,7 @@ export function useCaseDetail(caseId: string): UseCaseDetailReturn {
                 { score: number; triggered: boolean; explanation?: string }
             >;
 
-            const caseDetail: CaseDetail = {
+            const detail: CaseDetail = {
                 id: apiCase.case_id,
                 caseId: apiCase.case_id,
                 title: apiCase.explanation?.split(".")[0] ?? "Case Analysis",
@@ -160,7 +163,7 @@ export function useCaseDetail(caseId: string): UseCaseDetailReturn {
                 flaggedTransactions: [],
             };
 
-            setCaseDetail(caseDetail);
+            setCaseDetail(detail);
         } catch (err) {
             console.error("Failed to fetch case detail:", err);
             if (err instanceof ApiError) {
@@ -177,11 +180,22 @@ export function useCaseDetail(caseId: string): UseCaseDetailReturn {
         } finally {
             setLoading(false);
         }
-    }, [caseId]);
+    }, [caseId, caseDetail]);
 
     useEffect(() => {
         fetchCaseDetail();
-    }, [fetchCaseDetail]);
+    }, [caseId]); // Only fetch on mount or caseId change
+
+    // Auto-poll when status is processing
+    useEffect(() => {
+        if (caseDetail?.status === "processing" || caseDetail?.status === "uploaded") {
+            const pollInterval = setInterval(() => {
+                fetchCaseDetail();
+            }, 3000); // Poll every 3 seconds
+
+            return () => clearInterval(pollInterval);
+        }
+    }, [caseDetail?.status, fetchCaseDetail]);
 
     return { caseDetail, loading, error, refetch: fetchCaseDetail };
 }

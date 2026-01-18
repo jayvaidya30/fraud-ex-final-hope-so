@@ -100,6 +100,17 @@ export default function CaseDetailPage() {
             <Header title={caseDetail.caseId} description={caseDetail.title} />
 
             <div className="flex flex-1 flex-col gap-6 p-6">
+                {/* Processing indicator */}
+                {(caseDetail.status === "processing" || caseDetail.status === "uploaded") && (
+                    <div className="flex items-center gap-3 rounded-lg border border-blue-500/50 bg-blue-500/10 px-4 py-3 text-blue-600 dark:text-blue-400">
+                        <RefreshCwIcon className="h-5 w-5 animate-spin" />
+                        <div>
+                            <p className="font-medium">Analysis in progress...</p>
+                            <p className="text-sm opacity-80">This page will automatically update when complete.</p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Error message */}
                 {error && (
                     <div className="flex items-center gap-2 rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-600 dark:text-red-400">

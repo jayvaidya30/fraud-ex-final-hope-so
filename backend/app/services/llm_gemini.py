@@ -8,6 +8,7 @@ def is_configured() -> bool:
 def analyze_document(text: str) -> str:
     """
     Analyzes the document text using Gemini to find corruption risks.
+    Uses a streamlined prompt for faster response.
     """
     if not is_configured():
         return "LLM analysis skipped (API key not configured)."
@@ -20,24 +21,26 @@ def analyze_document(text: str) -> str:
 
     client = genai.Client(api_key=settings.gemini_api_key)
 
-    prompt = f"""
-    You are an expert anti-corruption analyst. Analyze the following document text for indicators of fraud, corruption, or irregularity.
+    # Use shorter text sample for faster processing (3000 chars instead of 10000)
+    text_sample = text[:3000]
     
-    Focus on:
-    - Unusually high prices or round numbers.
-    - Vendor collusion or conflict of interest clues.
-    - Urgency or bypassing of procedure.
-    - Vague descriptions of services.
-    
-    Provide a concise summary of risk indicators. If none found, state that the document appears standard.
-    
-    Document Text:
-    {text[:10000]}  # Truncate to avoid context limit for MVP
-    """
+    # Streamlined prompt for faster response
+    prompt = f"""Analyze this procurement/financial document for fraud indicators. Be brief.
+
+Key risks to check:
+- Unusual prices or round numbers
+- Vendor collusion signs
+- Procedure bypassing
+- Vague service descriptions
+
+Document excerpt:
+{text_sample}
+
+Provide a 2-3 sentence summary of any concerns found, or state if document appears normal."""
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
         )
         return response.text
@@ -50,3 +53,4 @@ def analyze_document(text: str) -> str:
             client.close()
         except Exception:
             pass
+

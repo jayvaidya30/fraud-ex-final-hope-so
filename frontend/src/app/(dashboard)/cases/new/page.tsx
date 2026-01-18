@@ -68,30 +68,29 @@ export default function NewCasePage() {
         setError(null);
         setUploading(true);
         setStatus("Uploading document...");
-        setUploadProgress(10);
+        setUploadProgress(20);
 
         try {
             // Upload the file
-            setUploadProgress(30);
+            setUploadProgress(50);
             const uploadResult = await uploadCase(file);
             const caseId = uploadResult.case.case_id;
 
-            setUploadProgress(50);
-            setUploading(false);
-            setAnalyzing(true);
-            setStatus("Analyzing document for fraud signals...");
-
-            // Trigger analysis
             setUploadProgress(70);
-            await analyzeCase(caseId);
+            setStatus("Starting analysis...");
+
+            // Trigger analysis (runs in background on server)
+            // Don't await - redirect immediately since analysis runs async
+            analyzeCase(caseId).catch((err) => {
+                console.error("Analysis trigger error:", err);
+            });
 
             setUploadProgress(100);
-            setStatus("Analysis complete! Redirecting...");
+            setUploading(false);
+            setStatus("Redirecting to case page...");
 
-            // Redirect to case detail page
-            setTimeout(() => {
-                router.push(`/cases/${caseId}`);
-            }, 1000);
+            // Redirect immediately - case page will show processing status
+            router.push(`/cases/${caseId}`);
 
         } catch (err) {
             setUploading(false);
