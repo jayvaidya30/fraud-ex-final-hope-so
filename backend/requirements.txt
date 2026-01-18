@@ -1,0 +1,47 @@
+fastapi
+uvicorn[standard]
+
+# Config / env
+pydantic-settings
+python-dotenv
+
+# Requests
+httpx
+tenacity
+
+# Uploads
+python-multipart
+
+# Auth
+python-jose[cryptography]
+passlib[bcrypt]
+email-validator
+
+# Rate limiting
+slowapi
+
+# Database
+sqlalchemy
+alembic
+psycopg[binary]
+
+# Data / anomaly detection
+numpy
+pandas
+scikit-learn
+rapidfuzz
+
+# Document parsing / OCR (requires system deps for full functionality)
+pillow
+pytesseract
+pdf2image
+pymupdf
+
+# LLM (Gemini)
+google-genai
+
+# Logging
+structlog
+pytest
+pytest-asyncio
+httpx

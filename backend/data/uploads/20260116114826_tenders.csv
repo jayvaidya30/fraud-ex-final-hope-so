@@ -1,0 +1,6 @@
+tender_id,department,project_name,estimated_cost,issue_date,closing_date
+T001,Public Works,Rural Road Repair Phase 1,5000000,2024-01-05,2024-01-20
+T002,Public Works,Urban Drainage Upgrade,4800000,2024-02-01,2024-02-18
+T003,Urban Development,Smart Street Lighting,10000000,2024-02-10,2024-03-01
+T004,Public Works,Rural Road Repair Phase 2,5100000,2024-03-05,2024-03-22
+
